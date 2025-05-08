@@ -23,6 +23,11 @@ const ui = {
     showModal(modalId) {
         const modal = document.getElementById(modalId);
         modal.style.display = 'block';
+        
+        // Populate user select dropdown when attendance modal is opened
+        if (modalId === 'attendance-modal') {
+            this.populateUserSelect();
+        }
     },
 
     hideModal(modalId) {
@@ -170,5 +175,17 @@ const ui = {
         this.initModals();
         this.refreshUsers();
         this.refreshAttendance();
+    },
+
+    async populateUserSelect() {
+        try {
+            const users = await api.getUsers();
+            const userSelect = document.getElementById('user-select');
+            userSelect.innerHTML = users.map(user => 
+                `<option value="${user.id}">${user.name} (${user.role})</option>`
+            ).join('');
+        } catch (error) {
+            alert('Failed to load users: ' + error.message);
+        }
     }
 }; 
